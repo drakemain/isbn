@@ -19,7 +19,7 @@ export class IsbnService {
 
   public isValid(isbn: string): any {
     let computed = this.computeChecksum(isbn);
-    let received = Number(isbn.charAt(isbn.length - 1));
+    let received = isbn.charAt(isbn.length - 1);
 
     return {
       isValid: computed === received,
@@ -27,8 +27,9 @@ export class IsbnService {
     };
   }
 
-  private computeChecksum(isbn: string): number {
+  private computeChecksum(isbn: string): string {
     let sum = 0;
+    let result = 0;
 
     if (isbn.length >= 9) {
       for (let i = 0; i < 9; ++i) {
@@ -37,12 +38,14 @@ export class IsbnService {
         if (digit === NaN) {
           throw new Error('ISBN Contained non-numeric char!');
         }
-        sum += digit;
+        sum += digit * (10 - i);
       }
     } else {
       throw new Error('ISBN too short!');
     }
+    
+    result = (11 - (sum % 11)) % 11;
 
-    return sum % 10;
+    return result !== 10 ? String(result) : 'X';
   }
 }

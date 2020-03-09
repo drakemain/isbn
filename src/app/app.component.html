@@ -17,6 +17,30 @@
         Expected checksum: <code>{{scannedValue[scannedValue.length-1]}}</code>
         Computed checksum: <code id="computed-checksum"></code>
       </p>
+      <table class="table">
+        <tr>
+          <th scope="col">Weight</th>
+          <th scope="col">10</th>
+          <th scope="col">9</th>
+          <th scope="col">8</th>
+          <th scope="col">7</th>
+          <th scope="col">6</th>
+          <th scope="col">5</th>
+          <th scope="col">4</th>
+          <th scope="col">3</th>
+          <th scope="col">2</th>
+          <th scope="col">-</th>
+        </tr>
+        <tr>
+          <th scope="row">Scanned Value</th>
+          <td *ngFor="let digit of scannedDigitArray">{{digit}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Product</th>
+          <td *ngFor="let product of scannedDigitProducts">{{product}}</td>
+        </tr>
+      </table>
+      <span>(11 - {{scannedDigitProducts[scannedDigitProducts.length - 1]}} % 11) % 11 = {{(11 - scannedDigitProducts[scannedDigitProducts.length - 1] % 11) % 11}}</span>
     </div>
   </div>
 </div>

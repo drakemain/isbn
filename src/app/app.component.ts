@@ -12,6 +12,8 @@ export class AppComponent {
   badScanMode = false;
   activeBarcode: HTMLElement;
   scannedValue = '';
+  scannedDigitArray: string[] = [];
+  scannedDigitProducts: number[] = [];
 
   constructor(private isbnService: IsbnService) { }
 
@@ -56,6 +58,7 @@ export class AppComponent {
     }
 
     validIndicator.hidden = false;
+    this.populateTable(this.scannedValue);
     let isValid = this.isbnService.isValid(this.scannedValue);
 
     if (isValid.isValid) {
@@ -117,5 +120,26 @@ export class AppComponent {
     }
 
     return result;
+  }
+
+  private populateTable(isbn: string) {
+    this.scannedDigitArray = [];
+    this.scannedDigitProducts = [];
+    let productSum = 0;
+
+    for (let digit of isbn) {
+      this.scannedDigitArray.push(digit);
+    }
+
+    for (let i = 0; i < 9; ++i) {
+      this.scannedDigitProducts.push((10 - i) 
+          * Number(this.scannedDigitArray[i]));
+    }
+
+    for (let val of this.scannedDigitProducts) {
+      productSum += val;
+    }
+
+    this.scannedDigitProducts.push(productSum);
   }
 }
