@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { IsbnService } from './isbn.service'
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,120 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'isbn';
+  barcodes: string[] = [];
+  badScanMode = false;
+  activeBarcode: HTMLElement;
+  scannedValue = '';
+
+  constructor(private isbnService: IsbnService) { }
+
+  createNewBarcode() {
+    let newBarcode = this.isbnService.generate();
+
+    this.barcodes.push(newBarcode);
+  }
+
+  onBarcodeClick(e: Event) {
+    if (this.activeBarcode) {
+      this.activeBarcode.classList.remove('active');
+
+      if (this.activeBarcode === e.target) {
+        console.log('disable');
+        let validIndicator = document.getElementById('valid-indicator');
+        this.activeBarcode = null;
+        this.scannedValue = '';
+        validIndicator.innerText = '';
+        validIndicator.hidden = true;
+      } else {
+        this.scanBarcode(e.target as HTMLElement);
+      }
+    } else {
+      this.scanBarcode(e.target as HTMLElement);
+    }
+  }
+
+  setBadScanMode(val: boolean) {
+    this.badScanMode = val;
+  }
+
+  private scanBarcode(barcodeElement: HTMLElement) {
+    let validIndicator = document.getElementById('valid-indicator');
+    this.activeBarcode = barcodeElement;
+    barcodeElement.classList.add('active');
+
+    if (this.badScanMode) {
+      this.scannedValue = this.addNoise(barcodeElement.innerText);
+    } else {
+      this.scannedValue = barcodeElement.innerText;
+    }
+
+    validIndicator.hidden = false;
+
+    if (this.isbnService.isValid(this.scannedValue)) {
+      validIndicator.innerText = '✓';
+      validIndicator.classList.add('valid');
+    } else {
+      validIndicator.innerText = '✗';
+      validIndicator.classList.remove('valid');
+    }
+
+    console.log(this.isbnService.isValid(this.scannedValue));
+  }
+
+  private addNoise(isbn: string, digitNum: number = 1): string {
+    digitNum = digitNum < isbn.length ? digitNum : isbn.length;
+    let indexList: number[] = [];
+    let noisyDigits: number[] = [];
+    let result = '';
+    
+    if (digitNum === 0) { return; }
+
+    for (let i = 0; i < digitNum; ++i) {
+      let index: number;
+
+      do {
+        index = Math.floor(Math.random()*isbn.length);
+      } while (index > isbn.length - 1 || indexList.includes(index));
+
+      indexList.push(index);
+    }
+
+    indexList = indexList.sort();
+
+    for (let i of indexList) {
+      let digit = Number(isbn.charAt(i));
+      let noise = Math.floor(Math.random() * 9);
+      let noisyDigit = (digit + noise) % 10;
+      
+      noisyDigits.push(noisyDigit);
+    }
+
+    for (let i = 0; i < indexList.length; ++i) {
+      let slice: string = '';
+
+      if (i === 0) {
+        console.log('start');
+        slice = isbn.substring(0, indexList[i]) + String(noisyDigits[i]);
+      } else {
+        console.log('middle');
+        slice = isbn.substring(indexList[i-1]+1, indexList[i]);
+        slice += String(noisyDigits[i]);
+      }
+
+      if (i === indexList.length - 1) {
+        console.log('end');
+        slice = isbn.substring(indexList[i-1]+1, indexList[i]);
+        slice += noisyDigits[i];
+        slice += isbn.substr(indexList[i]+1);
+      }
+
+      console.log(slice, noisyDigits[i]);
+
+      result += slice;
+    }
+
+    console.log(indexList, noisyDigits);
+
+    return result;
+  }
 }
