@@ -26,7 +26,6 @@ export class AppComponent {
       this.activeBarcode.classList.remove('active');
 
       if (this.activeBarcode === e.target) {
-        console.log('disable');
         let validIndicator = document.getElementById('valid-indicator');
         this.activeBarcode = null;
         this.scannedValue = '';
@@ -65,7 +64,6 @@ export class AppComponent {
       validIndicator.classList.remove('valid');
     }
 
-    console.log(this.isbnService.isValid(this.scannedValue));
   }
 
   private addNoise(isbn: string, digitNum: number = 1): string {
@@ -100,27 +98,20 @@ export class AppComponent {
       let slice: string = '';
 
       if (i === 0) {
-        console.log('start');
         slice = isbn.substring(0, indexList[i]) + String(noisyDigits[i]);
       } else {
-        console.log('middle');
         slice = isbn.substring(indexList[i-1]+1, indexList[i]);
         slice += String(noisyDigits[i]);
       }
 
       if (i === indexList.length - 1) {
-        console.log('end');
         slice = isbn.substring(indexList[i-1]+1, indexList[i]);
         slice += noisyDigits[i];
         slice += isbn.substr(indexList[i]+1);
       }
 
-      console.log(slice, noisyDigits[i]);
-
       result += slice;
     }
-
-    console.log(indexList, noisyDigits);
 
     return result;
   }
