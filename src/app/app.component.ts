@@ -31,6 +31,7 @@ export class AppComponent {
         this.scannedValue = '';
         validIndicator.innerText = '';
         validIndicator.hidden = true;
+        document.getElementById('computed-checksum').innerText = '';
       } else {
         this.scanBarcode(e.target as HTMLElement);
       }
@@ -55,8 +56,9 @@ export class AppComponent {
     }
 
     validIndicator.hidden = false;
+    let isValid = this.isbnService.isValid(this.scannedValue);
 
-    if (this.isbnService.isValid(this.scannedValue)) {
+    if (isValid.isValid) {
       validIndicator.innerText = '✓';
       validIndicator.classList.add('valid');
     } else {
@@ -64,6 +66,7 @@ export class AppComponent {
       validIndicator.classList.remove('valid');
     }
 
+    document.getElementById('computed-checksum').innerText = isValid.checksum;
   }
 
   private addNoise(isbn: string, digitNum: number = 1): string {
@@ -88,7 +91,7 @@ export class AppComponent {
 
     for (let i of indexList) {
       let digit = Number(isbn.charAt(i));
-      let noise = Math.floor(Math.random() * 9);
+      let noise = Math.floor(Math.random() * 8) + 1;
       let noisyDigit = (digit + noise) % 10;
       
       noisyDigits.push(noisyDigit);

@@ -24,6 +24,8 @@
 #bc-panel {
   display: grid;
   grid-template-rows: 25% 75%;
+}
+#bc-panel > div {
   padding: 100px;
 }
 

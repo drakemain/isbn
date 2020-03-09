@@ -17,11 +17,14 @@ export class IsbnService {
     return newIsbn + String(this.computeChecksum(newIsbn));
   }
 
-  public isValid(isbn: string): boolean {
+  public isValid(isbn: string): any {
     let computed = this.computeChecksum(isbn);
     let received = Number(isbn.charAt(isbn.length - 1));
 
-    return computed === received;
+    return {
+      isValid: computed === received,
+      checksum: computed
+    };
   }
 
   private computeChecksum(isbn: string): number {

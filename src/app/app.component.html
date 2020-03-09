@@ -7,12 +7,16 @@
     </ul>
   </div>
   <div id="bc-panel">
-    <div>
+    <div id="bc-controls">
       <button (click)="createNewBarcode()">Generate</button>
       <input type="checkbox" (change)="setBadScanMode($event.target.checked)" name="bad-scan">Bad scan
     </div>
     <div>
-      <code id="scanned-value">{{scannedValue}}</code><span id='valid-indicator'></span>
+      <p>Scanned: <code id="scanned-value">{{scannedValue}}</code><span id='valid-indicator'></span></p>
+      <p>
+        Expected checksum: <code>{{scannedValue[scannedValue.length-1]}}</code>
+        Computed checksum: <code id="computed-checksum"></code>
+      </p>
     </div>
   </div>
 </div>
