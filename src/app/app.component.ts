@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IsbnService } from './isbn.service'
 
 @Component({
@@ -6,7 +6,7 @@ import { IsbnService } from './isbn.service'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'isbn';
   barcodes: string[] = [];
   badScanMode = false;
@@ -23,16 +23,23 @@ export class AppComponent {
     this.barcodes.push(newBarcode);
   }
 
+  ngOnInit() {
+    let outputPanel = document.getElementById('bc-output');
+    outputPanel.hidden = true;
+  }
+
   onBarcodeClick(e: Event) {
     if (this.activeBarcode) {
       this.activeBarcode.classList.remove('active');
 
       if (this.activeBarcode === e.target) {
         let validIndicator = document.getElementById('valid-indicator');
+        let outputPanel = document.getElementById('bc-output');
         this.activeBarcode = null;
         this.scannedValue = '';
         validIndicator.innerText = '';
         validIndicator.hidden = true;
+        outputPanel.hidden = true;
         document.getElementById('computed-checksum').innerText = '';
       } else {
         this.scanBarcode(e.target as HTMLElement);
@@ -48,6 +55,7 @@ export class AppComponent {
 
   private scanBarcode(barcodeElement: HTMLElement) {
     let validIndicator = document.getElementById('valid-indicator');
+    let outputPanel = document.getElementById('bc-output');
     this.activeBarcode = barcodeElement;
     barcodeElement.classList.add('active');
 
@@ -58,6 +66,7 @@ export class AppComponent {
     }
 
     validIndicator.hidden = false;
+    outputPanel.hidden = false;
     this.populateTable(this.scannedValue);
     let isValid = this.isbnService.isValid(this.scannedValue);
 

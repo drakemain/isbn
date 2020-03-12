@@ -11,7 +11,7 @@
       <button (click)="createNewBarcode()">Generate</button>
       <input type="checkbox" (change)="setBadScanMode($event.target.checked)" name="bad-scan">Bad scan
     </div>
-    <div>
+    <div id="bc-output">
       <p>Scanned: <code id="scanned-value">{{scannedValue}}</code><span id='valid-indicator'></span></p>
       <p>
         Expected checksum: <code>{{scannedValue[scannedValue.length-1]}}</code>
